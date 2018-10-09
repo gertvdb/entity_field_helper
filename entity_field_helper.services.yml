@@ -1,0 +1,4 @@
+services:
+  plugin.manager.entity_field_helper:
+    class: Drupal\entity_field_helper\Plugin\EntityFieldHelperManager
+    parent: default_plugin_manager
