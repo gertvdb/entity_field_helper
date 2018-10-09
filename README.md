@@ -64,6 +64,22 @@ those helpers.
 ##### Custom helper.
 
 ``` 
+namespace Drupal\entity_field_helper\Plugin\EntityFieldHelper;
+
+use Drupal\entity_field_helper\Plugin\EntityFieldHelperBase;
+
+/**
+ * Provides a General Entity Field Helper.
+ *
+ * @EntityFieldHelper(
+ *   id = "my_custom_helper",
+ *   name = "My Custom Helper",
+ * )
+ */
+final class MyCustomHelper extends EntityFieldHelperBase {}
+``` 
+
+``` 
   /** @var \Drupal\entity_field_helper\Plugin\EntityFieldHelperManager $pluginManager */
   $pluginManager = \Drupal::service('plugin.manager.entity_field_helper');
   
