@@ -20,14 +20,14 @@ class ReferenceHelper extends EntityFieldHelperBase {
    */
   public function getValue(ContentEntityInterface $entity, $field) {
 
-    /** @var \Drupal\Core\Field\FieldItemListInterface $item_list */
-    $item_list = $this->getFieldItemList($entity, $field);
-    if (!$item_list) {
+    /** @var \Drupal\Core\Field\FieldItemListInterface $itemList */
+    $itemList = $this->getFieldItemList($entity, $field);
+    if (!$itemList) {
       return NULL;
     }
 
     /** @var \Drupal\Core\Field\FieldItemInterface $item */
-    $item = $item_list->first();
+    $item = $itemList->first();
     if (!$item) {
       return NULL;
     }
@@ -52,16 +52,16 @@ class ReferenceHelper extends EntityFieldHelperBase {
    */
   public function getValues(ContentEntityInterface $entity, $field) {
 
-    /** @var \Drupal\Core\Field\FieldItemListInterface $item_list */
-    $item_list = $this->getFieldItemList($entity, $field);
-    if (!$item_list) {
+    /** @var \Drupal\Core\Field\FieldItemListInterface $itemList */
+    $itemList = $this->getFieldItemList($entity, $field);
+    if (!$itemList) {
       return NULL;
     }
 
     $values = [];
 
     /** @var \Drupal\Core\Field\FieldItemInterface $item */
-    foreach ($item_list->getIterator() as $item) {
+    foreach ($itemList->getIterator() as $item) {
 
       // Referenced items can return NULL if the item
       // that is referenced is deleted but the entity containing
@@ -82,7 +82,7 @@ class ReferenceHelper extends EntityFieldHelperBase {
       $values[] = $entityAdapter->getValue();
     }
 
-    return !empty($values) ? $values : NULL;
+    return !empty(array_filter($values)) ? array_filter($values) : NULL;
   }
 
 }

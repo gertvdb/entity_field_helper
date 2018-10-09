@@ -24,8 +24,8 @@ class FileHelper extends ReferenceHelper {
    *   Relative File Url with the specified settings.
    */
   public function getUrl(FileInterface $file) {
-    $absolute_url = $this->getAbsoluteUrl($file);
-    return $absolute_url ? file_url_transform_relative($absolute_url) : $absolute_url;
+    $absoluteUrl = $this->getAbsoluteUrl($file);
+    return $absoluteUrl ? file_url_transform_relative($absoluteUrl) : $absoluteUrl;
   }
 
   /**

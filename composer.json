@@ -1,6 +1,6 @@
 {
-  "name": "gertvdb/iso3166",
-  "description": "Provide support for ISO3166 codes",
+  "name": "gertvdb/entity_field_helper",
+  "description": "Helper for getting field values from entities.",
   "type": "drupal-module",
   "license": "GPL-2.0+",
   "require-dev": {
@@ -27,12 +27,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Drupal\\country\\": "src/"
+      "Drupal\\entity_field_helper\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Drupal\\Tests\\iso3166\\": "tests/src/",
+      "Drupal\\Tests\\entity_field_helper\\": "tests/src/",
       "Drupal\\Tests\\": "vendor/drupal/core/tests/Drupal/Tests"
     }
   },
@@ -41,8 +41,5 @@
       "type": "composer",
       "url": "https://packages.drupal.org/8"
     }
-  },
-  "require": {
-    "league/iso3166": "^2.1"
   }
 }

@@ -21,14 +21,14 @@ final class BooleanHelper extends EntityFieldHelperBase {
    */
   public function getValue(ContentEntityInterface $entity, $field) {
 
-    /** @var \Drupal\Core\Field\FieldItemListInterface $item_list */
-    $item_list = $this->getFieldItemList($entity, $field);
-    if (!$item_list) {
+    /** @var \Drupal\Core\Field\FieldItemListInterface $itemList */
+    $itemList = $this->getFieldItemList($entity, $field);
+    if (!$itemList) {
       return NULL;
     }
 
     /** @var \Drupal\Core\Field\FieldItemInterface $item */
-    $item = $item_list->first();
+    $item = $itemList->first();
     if (!$item) {
       return NULL;
     }
@@ -41,6 +41,7 @@ final class BooleanHelper extends EntityFieldHelperBase {
       }
     }
     catch (\Exception $e) {
+      return NULL;
     }
 
     return NULL;
@@ -50,16 +51,16 @@ final class BooleanHelper extends EntityFieldHelperBase {
    * {@inheritdoc}
    */
   public function getValues(ContentEntityInterface $entity, $field) {
-    /** @var \Drupal\Core\Field\FieldItemListInterface $item_list */
-    $item_list = $this->getFieldItemList($entity, $field);
-    if (!$item_list) {
+    /** @var \Drupal\Core\Field\FieldItemListInterface $itemList */
+    $itemList = $this->getFieldItemList($entity, $field);
+    if (!$itemList) {
       return NULL;
     }
 
     $values = [];
 
     /** @var \Drupal\Core\Field\FieldItemInterface $item */
-    foreach ($item_list->getIterator() as $item) {
+    foreach ($itemList->getIterator() as $item) {
 
       if (!$item) {
         continue;
@@ -73,6 +74,7 @@ final class BooleanHelper extends EntityFieldHelperBase {
         }
       }
       catch (\Exception $e) {
+        continue;
       }
     }
 

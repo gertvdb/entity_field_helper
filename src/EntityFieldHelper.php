@@ -30,4 +30,5 @@ class EntityFieldHelper implements ContainerInterface {
   public static function generalHelper() {
     return static::getContainer()->get('plugin.manager.entity_field_helper')->createInstance('general');
   }
+
 }

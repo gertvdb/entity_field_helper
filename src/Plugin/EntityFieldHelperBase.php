@@ -16,14 +16,14 @@ abstract class EntityFieldHelperBase extends PluginBase implements EntityFieldHe
    */
   public function getValue(ContentEntityInterface $entity, $field) {
 
-    /** @var \Drupal\Core\Field\FieldItemListInterface $item_list */
-    $item_list = $this->getFieldItemList($entity, $field);
-    if (!$item_list) {
+    /** @var \Drupal\Core\Field\FieldItemListInterface $itemList */
+    $itemList = $this->getFieldItemList($entity, $field);
+    if (!$itemList) {
       return NULL;
     }
 
     /** @var \Drupal\Core\Field\FieldItemInterface $item */
-    $item = $item_list->first();
+    $item = $itemList->first();
     if (!$item) {
       return NULL;
     }
@@ -36,6 +36,7 @@ abstract class EntityFieldHelperBase extends PluginBase implements EntityFieldHe
       }
     }
     catch (\Exception $e) {
+      return NULL;
     }
 
     return NULL;
@@ -46,16 +47,16 @@ abstract class EntityFieldHelperBase extends PluginBase implements EntityFieldHe
    */
   public function getValues(ContentEntityInterface $entity, $field) {
 
-    /** @var \Drupal\Core\Field\FieldItemListInterface $item_list */
-    $item_list = $this->getFieldItemList($entity, $field);
-    if (!$item_list) {
+    /** @var \Drupal\Core\Field\FieldItemListInterface $itemList */
+    $itemList = $this->getFieldItemList($entity, $field);
+    if (!$itemList) {
       return NULL;
     }
 
     $values = [];
 
     /** @var \Drupal\Core\Field\FieldItemInterface $item */
-    foreach ($item_list->getIterator() as $item) {
+    foreach ($itemList->getIterator() as $item) {
 
       if (!$item) {
         continue;
@@ -72,23 +73,31 @@ abstract class EntityFieldHelperBase extends PluginBase implements EntityFieldHe
       }
     }
 
-    return !empty($values) ? $values : NULL;
+    return !empty(array_filter($values)) ? array_filter($values) : NULL;
   }
 
   /**
-   * {@inheritdoc}
+   * Get the field item list.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The entity to get the field values from.
+   * @param string $field
+   *   The field name.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface|null
+   *   The field item list for the field.
    */
   protected function getFieldItemList(ContentEntityInterface $entity, $field) {
     if (!$entity->hasField($field)) {
       return NULL;
     }
 
-    $item_list = $entity->get($field);
-    if ($item_list->isEmpty()) {
+    $itemList = $entity->get($field);
+    if ($itemList->isEmpty()) {
       return NULL;
     }
 
-    return $item_list;
+    return $itemList;
   }
 
 }

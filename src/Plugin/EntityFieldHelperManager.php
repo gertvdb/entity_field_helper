@@ -17,16 +17,16 @@ class EntityFieldHelperManager extends DefaultPluginManager {
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
    *   keyed by the corresponding namespace to look for plugin implementations.
-   * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
+   * @param \Drupal\Core\Cache\CacheBackendInterface $cacheBackend
    *   Cache backend instance to use.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The module handler to invoke the alter hook with.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/EntityFieldHelper', $namespaces, $module_handler, 'Drupal\entity_field_helper\Plugin\EntityFieldHelperInterface', 'Drupal\entity_field_helper\Annotation\EntityFieldHelper');
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cacheBackend, ModuleHandlerInterface $moduleHandler) {
+    parent::__construct('Plugin/EntityFieldHelper', $namespaces, $moduleHandler, 'Drupal\entity_field_helper\Plugin\EntityFieldHelperInterface', 'Drupal\entity_field_helper\Annotation\EntityFieldHelper');
 
     $this->alterInfo('entity_field_helper_entity_field_helper_info');
-    $this->setCacheBackend($cache_backend, 'entity_field_helper_entity_field_helper_plugins');
+    $this->setCacheBackend($cacheBackend, 'entity_field_helper_entity_field_helper_plugins');
   }
 
   /**

@@ -18,8 +18,8 @@ interface EntityFieldHelperInterface extends PluginInspectionInterface {
    * @param string $field
    *   The field name.
    *
-   * @return mixed|bool
-   *   A single object.
+   * @return mixed|null
+   *   A single value.
    */
   public function getValue(ContentEntityInterface $entity, $field);
 
@@ -31,8 +31,8 @@ interface EntityFieldHelperInterface extends PluginInspectionInterface {
    * @param string $field
    *   The field name.
    *
-   * @return array|bool
-   *   An array of objects
+   * @return array|null
+   *   An array of values
    */
   public function getValues(ContentEntityInterface $entity, $field);
 

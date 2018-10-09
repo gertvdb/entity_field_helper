@@ -26,14 +26,14 @@ final class LinkHelper extends EntityFieldHelperBase {
    */
   public function getValue(ContentEntityInterface $entity, $field) {
 
-    /** @var \Drupal\Core\Field\FieldItemListInterface $item_list */
-    $item_list = $this->getFieldItemList($entity, $field);
-    if (!$item_list) {
+    /** @var \Drupal\Core\Field\FieldItemListInterface $itemList */
+    $itemList = $this->getFieldItemList($entity, $field);
+    if (!$itemList) {
       return NULL;
     }
 
     /** @var \Drupal\Core\Field\FieldItemInterface $item */
-    $item = $item_list->first();
+    $item = $itemList->first();
     if (!$item) {
       return NULL;
     }
@@ -45,16 +45,11 @@ final class LinkHelper extends EntityFieldHelperBase {
       $options = $item->get('options');
 
       if ($uri instanceof Uri && $title instanceof StringData && $options instanceof Map) {
-        try {
-          $url = Url::fromUri($uri->getCastedValue(), $options->getValue());
-          $link = Link::fromTextAndUrl($title->getCastedValue(), $url);
-          return $link;
-        }
-        catch (\Exception $e) {
-        }
+        return $this->buildLink($uri, $title, $options);
       }
     }
     catch (\Exception $e) {
+      return NULL;
     }
 
     return NULL;
@@ -65,16 +60,16 @@ final class LinkHelper extends EntityFieldHelperBase {
    */
   public function getValues(ContentEntityInterface $entity, $field) {
 
-    /** @var \Drupal\Core\Field\FieldItemListInterface $item_list */
-    $item_list = $this->getFieldItemList($entity, $field);
-    if (!$item_list) {
+    /** @var \Drupal\Core\Field\FieldItemListInterface $itemList */
+    $itemList = $this->getFieldItemList($entity, $field);
+    if (!$itemList) {
       return NULL;
     }
 
     $values = [];
 
     /** @var \Drupal\Core\Field\FieldItemInterface $item */
-    foreach ($item_list->getIterator() as $item) {
+    foreach ($itemList->getIterator() as $item) {
 
       if (!$item) {
         continue;
@@ -87,20 +82,38 @@ final class LinkHelper extends EntityFieldHelperBase {
         $options = $item->get('options');
 
         if ($uri instanceof Uri && $title instanceof StringData && $options instanceof Map) {
-          try {
-            $url = Url::fromUri($uri->getCastedValue(), $options->getValue());
-            $link = Link::fromTextAndUrl($title->getCastedValue(), $url);
-            $values[] = $link;
-          }
-          catch (\Exception $e) {
-          }
+          $values[] = $this->buildLink($uri, $title, $options);
         }
       }
       catch (\Exception $e) {
+        continue;
       }
     }
 
-    return !empty($values) ? $values : NULL;
+    return !empty(array_filter($values)) ? array_filter($values) : NULL;
+  }
+
+  /**
+   * Get the title for the given link.
+   *
+   * @param \Drupal\Core\TypedData\Plugin\DataType\Uri $uri
+   *   An uri.
+   * @param \Drupal\Core\TypedData\Plugin\DataType\StringData $title
+   *   A title.
+   * @param \Drupal\Core\TypedData\Plugin\DataType\Map $options
+   *   An option map.
+   *
+   * @return \Drupal\Core\Link|null
+   *   A Link Object.
+   */
+  private function buildLink(Uri $uri, StringData $title, Map $options) {
+    try {
+      $url = Url::fromUri($uri->getCastedValue(), $options->getValue());
+      return Link::fromTextAndUrl($title->getCastedValue(), $url);
+    }
+    catch (\Exception $e) {
+      return NULL;
+    }
   }
 
   /**

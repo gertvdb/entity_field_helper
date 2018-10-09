@@ -28,25 +28,31 @@ final class ImageHelper extends FileHelper implements ContainerFactoryPluginInte
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ImageFactory $imageFactory) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  public function __construct(array $configuration, $pluginId, $pluginDefinition, ImageFactory $imageFactory) {
+    parent::__construct($configuration, $pluginId, $pluginDefinition);
     $this->imageFactory = $imageFactory;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $pluginId, $pluginDefinition) {
     return new static(
       $configuration,
-      $plugin_id,
-      $plugin_definition,
+      $pluginId,
+      $pluginDefinition,
       $container->get('image.factory')
     );
   }
 
   /**
-   * {@inheritdoc}
+   * Get the Image Object.
+   *
+   * @param \Drupal\file\FileInterface $file
+   *   A file object.
+   *
+   * @return \Drupal\Core\Image\ImageInterface|null
+   *   An image object or null.
    */
   public function getImage(FileInterface $file) {
     return $this->imageFactory->get($file->getFileUri())->isValid() ? $this->imageFactory->get($file->getFileUri()) : NULL;
@@ -64,8 +70,8 @@ final class ImageHelper extends FileHelper implements ContainerFactoryPluginInte
    *   Relative File Url with the specified settings.
    */
   public function getImageStyleUrl(FileInterface $file, ImageStyleInterface $imageStyle) {
-    $absolute_url = $this->getAbsoluteImageStyleUrl($file, $imageStyle);
-    return $absolute_url ? file_url_transform_relative($absolute_url) : NULL;
+    $absoluteUrl = $this->getAbsoluteImageStyleUrl($file, $imageStyle);
+    return $absoluteUrl ? file_url_transform_relative($absoluteUrl) : NULL;
   }
 
   /**

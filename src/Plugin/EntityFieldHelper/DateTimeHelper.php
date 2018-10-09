@@ -31,19 +31,19 @@ class DateTimeHelper extends EntityFieldHelperBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DateFormatterInterface $dateFormatter) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  public function __construct(array $configuration, $pluginId, $pluginSefinition, DateFormatterInterface $dateFormatter) {
+    parent::__construct($configuration, $pluginId, $pluginSefinition);
     $this->dateFormatter = $dateFormatter;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $pluginId, $pluginDefinition) {
     return new static(
       $configuration,
-      $plugin_id,
-      $plugin_definition,
+      $pluginId,
+      $pluginDefinition,
       $container->get('date.formatter')
     );
   }
@@ -52,14 +52,14 @@ class DateTimeHelper extends EntityFieldHelperBase implements ContainerFactoryPl
    * {@inheritdoc}
    */
   public function getValue(ContentEntityInterface $entity, $field) {
-    /** @var \Drupal\Core\Field\FieldItemListInterface $item_list */
-    $item_list = $this->getFieldItemList($entity, $field);
-    if (!$item_list) {
+    /** @var \Drupal\Core\Field\FieldItemListInterface $itemList */
+    $itemList = $this->getFieldItemList($entity, $field);
+    if (!$itemList) {
       return NULL;
     }
 
     /** @var \Drupal\Core\Field\FieldItemInterface $item */
-    $item = $item_list->first();
+    $item = $itemList->first();
     if (!$item) {
       return NULL;
     }
@@ -97,16 +97,16 @@ class DateTimeHelper extends EntityFieldHelperBase implements ContainerFactoryPl
    */
   public function getValues(ContentEntityInterface $entity, $field) {
 
-    /** @var \Drupal\Core\Field\FieldItemListInterface $item_list */
-    $item_list = $this->getFieldItemList($entity, $field);
-    if (!$item_list) {
+    /** @var \Drupal\Core\Field\FieldItemListInterface $itemList */
+    $itemList = $this->getFieldItemList($entity, $field);
+    if (!$itemList) {
       return NULL;
     }
 
     $values = [];
 
     /** @var \Drupal\Core\Field\FieldItemInterface $item */
-    foreach ($item_list->getIterator() as $item) {
+    foreach ($itemList->getIterator() as $item) {
 
       if (!$item) {
         continue;
