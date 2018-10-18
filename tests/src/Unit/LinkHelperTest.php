@@ -2,19 +2,28 @@
 
 namespace Drupal\Tests\entity_field_helper\Unit;
 
+use Drupal\Core\Url;
+use Drupal\Core\Link;
 use Drupal\Tests\UnitTestCase;
 use Drupal\Core\Field\FieldItemList;
-use Drupal\Core\Field\Plugin\Field\FieldType\BooleanItem;
-use Drupal\Core\TypedData\Plugin\DataType\BooleanData;
+use Drupal\link\Plugin\Field\FieldType\LinkItem;
+use Drupal\Core\TypedData\Plugin\DataType\StringData;
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\entity_field_helper\Plugin\EntityFieldHelper\BooleanHelper;
+use Drupal\entity_field_helper\Plugin\EntityFieldHelper\LinkHelper;
 
 /**
- * Class BooleanHelperTest.
+ * Class LinkHelperTest.
  *
  * @group entity_field_helper
  */
-final class BooleanHelperTest extends UnitTestCase {
+final class LinkHelperTest extends UnitTestCase {
+
+  /**
+   * The link title.
+   *
+   * @var string
+   */
+  protected $title;
 
   /**
    * The field name.
@@ -40,43 +49,72 @@ final class BooleanHelperTest extends UnitTestCase {
   /**
    * The item.
    *
-   * @var \Drupal\Core\Field\Plugin\Field\FieldType\BooleanItem|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Field\Plugin\Field\FieldType\FloatItem|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $item;
 
   /**
    * The boolean data.
    *
-   * @var \Drupal\Core\TypedData\Plugin\DataType\BooleanData|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\TypedData\Plugin\DataType\FloatData|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $data;
+
+  /**
+   * The url.
+   *
+   * @var \Drupal\Core\Url|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $url;
 
   /**
    * Setup.
    */
   protected function setUp() {
-    $this->fieldName = 'field_boolean';
+    $this->fieldName = 'field_link';
+    $this->title = 'My Link';
 
-    $this->data = $this->getMockBuilder(BooleanData::class)
+    $this->url = $this->getMockBuilder(Url::class)
       ->disableOriginalConstructor()
-      ->setMethods(['getCastedValue'])
+      ->setMethods(['getOption'])
+      ->getMock();
+
+    $this->url
+      ->expects($this->any())
+      ->method('getOption')
+      ->with('attributes')
+      ->willReturn([]);
+
+    $this->data = $this->getMockBuilder(StringData::class)
+      ->disableOriginalConstructor()
+      ->setMethods(['getValue'])
       ->getMock();
 
     $this->data
       ->expects($this->any())
-      ->method('getCastedValue')
-      ->willReturn(TRUE);
+      ->method('getValue')
+      ->willReturn($this->title);
 
-    $this->item = $this->getMockBuilder(BooleanItem::class)
+    $this->item = $this->getMockBuilder(LinkItem::class)
       ->disableOriginalConstructor()
-      ->setMethods(['get'])
+      ->setMethods(['get', 'getUrl', 'isExternal'])
       ->getMock();
 
     $this->item
       ->expects($this->any())
       ->method('get')
-      ->with('value')
+      ->with('title')
       ->willReturn($this->data);
+
+    $this->item
+      ->expects($this->any())
+      ->method('getUrl')
+      ->willReturn($this->url);
+
+    $this->item
+      ->expects($this->any())
+      ->method('isExternal')
+      ->willReturn(TRUE);
 
     $this->itemList = $this->getMockBuilder(FieldItemList::class)
       ->disableOriginalConstructor()
@@ -120,20 +158,20 @@ final class BooleanHelperTest extends UnitTestCase {
    * Test the getValue method.
    */
   public function testGetValue() {
-    $booleanHelper = new BooleanHelper([], 'boolean', []);
-    $this->assertEquals($booleanHelper->getValue($this->entity, $this->fieldName), TRUE);
+    $linkHelper = new LinkHelper([], 'link', []);
+    $this->assertEquals($linkHelper->getValue($this->entity, $this->fieldName), Link::fromTextAndUrl($this->title, $this->url));
   }
 
   /**
    * Test the getValues method.
    */
   public function testGetValues() {
-    $booleanHelper = new BooleanHelper([], 'boolean', []);
+    $linkHelper = new LinkHelper([], 'link', []);
     $this->assertEquals(
-      $booleanHelper->getValues($this->entity, $this->fieldName), [
-        TRUE,
-        TRUE,
-        TRUE,
+      $linkHelper->getValues($this->entity, $this->fieldName), [
+        Link::fromTextAndUrl($this->title, $this->url),
+        Link::fromTextAndUrl($this->title, $this->url),
+        Link::fromTextAndUrl($this->title, $this->url),
       ]
     );
   }

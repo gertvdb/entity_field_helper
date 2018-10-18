@@ -4,17 +4,17 @@ namespace Drupal\Tests\entity_field_helper\Unit;
 
 use Drupal\Tests\UnitTestCase;
 use Drupal\Core\Field\FieldItemList;
-use Drupal\Core\Field\Plugin\Field\FieldType\BooleanItem;
-use Drupal\Core\TypedData\Plugin\DataType\BooleanData;
+use Drupal\Core\Field\Plugin\Field\FieldType\FloatItem;
+use Drupal\Core\TypedData\Plugin\DataType\FloatData;
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\entity_field_helper\Plugin\EntityFieldHelper\BooleanHelper;
+use Drupal\entity_field_helper\Plugin\EntityFieldHelper\NumberHelper;
 
 /**
- * Class BooleanHelperTest.
+ * Class FloatNumberHelperTest.
  *
  * @group entity_field_helper
  */
-final class BooleanHelperTest extends UnitTestCase {
+final class FloatNumberHelperTest extends UnitTestCase {
 
   /**
    * The field name.
@@ -40,14 +40,14 @@ final class BooleanHelperTest extends UnitTestCase {
   /**
    * The item.
    *
-   * @var \Drupal\Core\Field\Plugin\Field\FieldType\BooleanItem|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Field\Plugin\Field\FieldType\FloatItem|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $item;
 
   /**
    * The boolean data.
    *
-   * @var \Drupal\Core\TypedData\Plugin\DataType\BooleanData|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\TypedData\Plugin\DataType\FloatData|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $data;
 
@@ -55,9 +55,9 @@ final class BooleanHelperTest extends UnitTestCase {
    * Setup.
    */
   protected function setUp() {
-    $this->fieldName = 'field_boolean';
+    $this->fieldName = 'field_float';
 
-    $this->data = $this->getMockBuilder(BooleanData::class)
+    $this->data = $this->getMockBuilder(FloatData::class)
       ->disableOriginalConstructor()
       ->setMethods(['getCastedValue'])
       ->getMock();
@@ -65,9 +65,9 @@ final class BooleanHelperTest extends UnitTestCase {
     $this->data
       ->expects($this->any())
       ->method('getCastedValue')
-      ->willReturn(TRUE);
+      ->willReturn(3.14);
 
-    $this->item = $this->getMockBuilder(BooleanItem::class)
+    $this->item = $this->getMockBuilder(FloatItem::class)
       ->disableOriginalConstructor()
       ->setMethods(['get'])
       ->getMock();
@@ -120,20 +120,20 @@ final class BooleanHelperTest extends UnitTestCase {
    * Test the getValue method.
    */
   public function testGetValue() {
-    $booleanHelper = new BooleanHelper([], 'boolean', []);
-    $this->assertEquals($booleanHelper->getValue($this->entity, $this->fieldName), TRUE);
+    $numberHelper = new NumberHelper([], 'number', []);
+    $this->assertEquals($numberHelper->getValue($this->entity, $this->fieldName), 3.14);
   }
 
   /**
    * Test the getValues method.
    */
   public function testGetValues() {
-    $booleanHelper = new BooleanHelper([], 'boolean', []);
+    $numberHelper = new NumberHelper([], 'number', []);
     $this->assertEquals(
-      $booleanHelper->getValues($this->entity, $this->fieldName), [
-        TRUE,
-        TRUE,
-        TRUE,
+      $numberHelper->getValues($this->entity, $this->fieldName), [
+        3.14,
+        3.14,
+        3.14,
       ]
     );
   }

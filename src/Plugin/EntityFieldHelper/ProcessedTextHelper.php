@@ -4,8 +4,7 @@ namespace Drupal\entity_field_helper\Plugin\EntityFieldHelper;
 
 use Drupal\entity_field_helper\Plugin\EntityFieldHelperBase;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\TypedData\Plugin\DataType\StringData;
-use Drupal\filter\Plugin\DataType\FilterFormat;
+use Drupal\text\TextProcessed;
 
 /**
  * Provides a Entity Field Helper for Processed Text.
@@ -34,20 +33,14 @@ final class ProcessedTextHelper extends EntityFieldHelperBase {
       return NULL;
     }
 
-    // Look for the value property.
+    // Look for the computed processed processed.
     try {
-      $value = $item->get('value');
-      $format = $item->get('format');
-      if ($value instanceof StringData && $format instanceof FilterFormat) {
-        return [
-          '#type' => 'processed_text',
-          '#text' => $value->getCastedValue(),
-          '#format' => $format->getCastedValue(),
-        ];
+      $computedText = $item->get('processed');
+      if ($computedText instanceof TextProcessed) {
+        return $computedText->getValue();
       }
     }
     catch (\Exception $e) {
-      return NULL;
     }
 
     return NULL;
@@ -68,15 +61,20 @@ final class ProcessedTextHelper extends EntityFieldHelperBase {
     /** @var \Drupal\Core\Field\FieldItemInterface $item */
     foreach ($itemList->getIterator() as $item) {
 
-      if (!$item || !$item->get('value')) {
+      if (!$item) {
         continue;
       }
 
-      $values[] = [
-        '#type' => 'processed_text',
-        '#text' => $item->get('value'),
-        '#format' => $item->get('format'),
-      ];
+      // Look for the computed processed processed.
+      try {
+        $computedText = $item->get('processed');
+        if ($computedText instanceof TextProcessed) {
+          $values[] = $computedText->getValue();
+          continue;
+        }
+      }
+      catch (\Exception $e) {
+      }
     }
 
     return !empty($values) ? $values : NULL;

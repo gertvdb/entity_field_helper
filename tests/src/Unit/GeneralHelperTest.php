@@ -4,17 +4,26 @@ namespace Drupal\Tests\entity_field_helper\Unit;
 
 use Drupal\Tests\UnitTestCase;
 use Drupal\Core\Field\FieldItemList;
-use Drupal\Core\Field\Plugin\Field\FieldType\BooleanItem;
+use Drupal\Core\Field\FieldItemInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\TypedData\Plugin\DataType\BooleanData;
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\entity_field_helper\Plugin\EntityFieldHelper\BooleanHelper;
+use Drupal\entity_field_helper\Plugin\EntityFieldHelper\GeneralHelper;
+use Drupal\Core\TypedData\PrimitiveBase;
 
 /**
- * Class BooleanHelperTest.
+ * Class GeneralHelperTest.
  *
  * @group entity_field_helper
  */
-final class BooleanHelperTest extends UnitTestCase {
+final class GeneralHelperTest extends UnitTestCase {
+
+  /**
+   * The value.
+   *
+   * @var string
+   */
+  protected $value;
 
   /**
    * The field name.
@@ -55,22 +64,23 @@ final class BooleanHelperTest extends UnitTestCase {
    * Setup.
    */
   protected function setUp() {
-    $this->fieldName = 'field_boolean';
+    $this->value = 'General Field Value';
+    $this->fieldName = 'field_general';
 
-    $this->data = $this->getMockBuilder(BooleanData::class)
+    $this->data = $this->getMockBuilder(PrimitiveBase::class)
       ->disableOriginalConstructor()
-      ->setMethods(['getCastedValue'])
-      ->getMock();
+      ->setMethods(['getValue'])
+      ->getMockForAbstractClass();
 
     $this->data
       ->expects($this->any())
-      ->method('getCastedValue')
-      ->willReturn(TRUE);
+      ->method('getValue')
+      ->willReturn($this->value);
 
-    $this->item = $this->getMockBuilder(BooleanItem::class)
+    $this->item = $this->getMockBuilder(FieldItemInterface::class)
       ->disableOriginalConstructor()
       ->setMethods(['get'])
-      ->getMock();
+      ->getMockForAbstractClass();
 
     $this->item
       ->expects($this->any())
@@ -78,10 +88,10 @@ final class BooleanHelperTest extends UnitTestCase {
       ->with('value')
       ->willReturn($this->data);
 
-    $this->itemList = $this->getMockBuilder(FieldItemList::class)
+    $this->itemList = $this->getMockBuilder(FieldItemListInterface::class)
       ->disableOriginalConstructor()
       ->setMethods(['first', 'isEmpty', 'getIterator'])
-      ->getMock();
+      ->getMockForAbstractClass();
 
     $this->itemList
       ->expects($this->any())
@@ -120,20 +130,20 @@ final class BooleanHelperTest extends UnitTestCase {
    * Test the getValue method.
    */
   public function testGetValue() {
-    $booleanHelper = new BooleanHelper([], 'boolean', []);
-    $this->assertEquals($booleanHelper->getValue($this->entity, $this->fieldName), TRUE);
+    $generalHelper = new GeneralHelper([], 'general', []);
+    $this->assertEquals($generalHelper->getValue($this->entity, $this->fieldName), $this->value);
   }
 
   /**
    * Test the getValues method.
    */
   public function testGetValues() {
-    $booleanHelper = new BooleanHelper([], 'boolean', []);
+    $generalHelper = new GeneralHelper([], 'general', []);
     $this->assertEquals(
-      $booleanHelper->getValues($this->entity, $this->fieldName), [
-        TRUE,
-        TRUE,
-        TRUE,
+      $generalHelper->getValues($this->entity, $this->fieldName), [
+        $this->value,
+        $this->value,
+        $this->value,
       ]
     );
   }

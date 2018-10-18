@@ -4,17 +4,17 @@ namespace Drupal\Tests\entity_field_helper\Unit;
 
 use Drupal\Tests\UnitTestCase;
 use Drupal\Core\Field\FieldItemList;
-use Drupal\Core\Field\Plugin\Field\FieldType\BooleanItem;
-use Drupal\Core\TypedData\Plugin\DataType\BooleanData;
+use Drupal\text\Plugin\Field\FieldType\TextLongItem;
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\entity_field_helper\Plugin\EntityFieldHelper\BooleanHelper;
+use Drupal\entity_field_helper\Plugin\EntityFieldHelper\ProcessedTextHelper;
+use Drupal\text\TextProcessed;
 
 /**
  * Class BooleanHelperTest.
  *
  * @group entity_field_helper
  */
-final class BooleanHelperTest extends UnitTestCase {
+final class ProcessedTextHelperTest extends UnitTestCase {
 
   /**
    * The field name.
@@ -40,34 +40,41 @@ final class BooleanHelperTest extends UnitTestCase {
   /**
    * The item.
    *
-   * @var \Drupal\Core\Field\Plugin\Field\FieldType\BooleanItem|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\text\Plugin\Field\FieldType\TextLongItem|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $item;
 
   /**
-   * The boolean data.
+   * The string data.
    *
-   * @var \Drupal\Core\TypedData\Plugin\DataType\BooleanData|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\TypedData\Plugin\DataType\StringData|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $data;
+
+  /**
+   * The format data.
+   *
+   * @var \Drupal\filter\Plugin\DataType\FilterFormat|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $formatData;
 
   /**
    * Setup.
    */
   protected function setUp() {
-    $this->fieldName = 'field_boolean';
+    $this->fieldName = 'field_text';
 
-    $this->data = $this->getMockBuilder(BooleanData::class)
+    $this->data = $this->getMockBuilder(TextProcessed::class)
       ->disableOriginalConstructor()
-      ->setMethods(['getCastedValue'])
+      ->setMethods(['getValue'])
       ->getMock();
 
     $this->data
       ->expects($this->any())
-      ->method('getCastedValue')
-      ->willReturn(TRUE);
+      ->method('getValue')
+      ->willReturn('<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Pellentesque consequat</strong> quis ipsum non feugiat. Praesent sed urna in orci duis finibus rutrum pulvinar.</p>');
 
-    $this->item = $this->getMockBuilder(BooleanItem::class)
+    $this->item = $this->getMockBuilder(TextLongItem::class)
       ->disableOriginalConstructor()
       ->setMethods(['get'])
       ->getMock();
@@ -75,7 +82,7 @@ final class BooleanHelperTest extends UnitTestCase {
     $this->item
       ->expects($this->any())
       ->method('get')
-      ->with('value')
+      ->with('processed')
       ->willReturn($this->data);
 
     $this->itemList = $this->getMockBuilder(FieldItemList::class)
@@ -120,20 +127,20 @@ final class BooleanHelperTest extends UnitTestCase {
    * Test the getValue method.
    */
   public function testGetValue() {
-    $booleanHelper = new BooleanHelper([], 'boolean', []);
-    $this->assertEquals($booleanHelper->getValue($this->entity, $this->fieldName), TRUE);
+    $processHelper = new ProcessedTextHelper([], 'processed_text', []);
+    $this->assertEquals($processHelper->getValue($this->entity, $this->fieldName), '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Pellentesque consequat</strong> quis ipsum non feugiat. Praesent sed urna in orci duis finibus rutrum pulvinar.</p>');
   }
 
   /**
    * Test the getValues method.
    */
   public function testGetValues() {
-    $booleanHelper = new BooleanHelper([], 'boolean', []);
+    $processHelper = new ProcessedTextHelper([], 'processed_text', []);
     $this->assertEquals(
-      $booleanHelper->getValues($this->entity, $this->fieldName), [
-        TRUE,
-        TRUE,
-        TRUE,
+      $processHelper->getValues($this->entity, $this->fieldName), [
+        '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Pellentesque consequat</strong> quis ipsum non feugiat. Praesent sed urna in orci duis finibus rutrum pulvinar.</p>',
+        '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Pellentesque consequat</strong> quis ipsum non feugiat. Praesent sed urna in orci duis finibus rutrum pulvinar.</p>',
+        '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Pellentesque consequat</strong> quis ipsum non feugiat. Praesent sed urna in orci duis finibus rutrum pulvinar.</p>',
       ]
     );
   }

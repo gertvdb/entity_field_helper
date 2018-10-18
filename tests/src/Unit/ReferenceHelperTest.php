@@ -2,19 +2,21 @@
 
 namespace Drupal\Tests\entity_field_helper\Unit;
 
+use Drupal\entity_field_helper\Plugin\EntityFieldHelper\ReferenceHelper;
 use Drupal\Tests\UnitTestCase;
 use Drupal\Core\Field\FieldItemList;
-use Drupal\Core\Field\Plugin\Field\FieldType\BooleanItem;
-use Drupal\Core\TypedData\Plugin\DataType\BooleanData;
+use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\entity_field_helper\Plugin\EntityFieldHelper\BooleanHelper;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
+use Drupal\Core\Entity\Plugin\DataType\EntityReference;
 
 /**
- * Class BooleanHelperTest.
+ * Class ReferenceHelperTest.
  *
  * @group entity_field_helper
  */
-final class BooleanHelperTest extends UnitTestCase {
+final class ReferenceHelperTest extends UnitTestCase {
 
   /**
    * The field name.
@@ -40,34 +42,63 @@ final class BooleanHelperTest extends UnitTestCase {
   /**
    * The item.
    *
-   * @var \Drupal\Core\Field\Plugin\Field\FieldType\BooleanItem|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $item;
 
   /**
-   * The boolean data.
+   * The entity data.
    *
-   * @var \Drupal\Core\TypedData\Plugin\DataType\BooleanData|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Entity\Plugin\DataType\EntityReference|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $data;
+
+  /**
+   * The entity adapter.
+   *
+   * @var \Drupal\Core\Entity\Plugin\DataType\EntityAdapter|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $entityAdapter;
+
+  /**
+   * The entity.
+   *
+   * @var \Drupal\Core\Entity\EntityInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $refEntity;
 
   /**
    * Setup.
    */
   protected function setUp() {
-    $this->fieldName = 'field_boolean';
+    $this->fieldName = 'field_entity';
 
-    $this->data = $this->getMockBuilder(BooleanData::class)
+    $this->refEntity = $this->getMockBuilder(EntityInterface::class)
       ->disableOriginalConstructor()
-      ->setMethods(['getCastedValue'])
+      ->setMethods([])
+      ->getMockForAbstractClass();
+
+    $this->entityAdapter = $this->getMockBuilder(EntityAdapter::class)
+      ->disableOriginalConstructor()
+      ->setMethods(['getValue'])
+      ->getMock();
+
+    $this->entityAdapter
+      ->expects($this->any())
+      ->method('getValue')
+      ->willReturn($this->refEntity);
+
+    $this->data = $this->getMockBuilder(EntityReference::class)
+      ->disableOriginalConstructor()
+      ->setMethods(['getTarget'])
       ->getMock();
 
     $this->data
       ->expects($this->any())
-      ->method('getCastedValue')
-      ->willReturn(TRUE);
+      ->method('getTarget')
+      ->willReturn($this->entityAdapter);
 
-    $this->item = $this->getMockBuilder(BooleanItem::class)
+    $this->item = $this->getMockBuilder(EntityReferenceItem::class)
       ->disableOriginalConstructor()
       ->setMethods(['get'])
       ->getMock();
@@ -75,7 +106,7 @@ final class BooleanHelperTest extends UnitTestCase {
     $this->item
       ->expects($this->any())
       ->method('get')
-      ->with('value')
+      ->with('entity')
       ->willReturn($this->data);
 
     $this->itemList = $this->getMockBuilder(FieldItemList::class)
@@ -114,26 +145,27 @@ final class BooleanHelperTest extends UnitTestCase {
       ->method('get')
       ->with($this->fieldName)
       ->willReturn($this->itemList);
+
   }
 
   /**
    * Test the getValue method.
    */
   public function testGetValue() {
-    $booleanHelper = new BooleanHelper([], 'boolean', []);
-    $this->assertEquals($booleanHelper->getValue($this->entity, $this->fieldName), TRUE);
+    $referenceHelper = new ReferenceHelper([], 'reference', []);
+    $this->assertEquals($referenceHelper->getValue($this->entity, $this->fieldName), $this->refEntity);
   }
 
   /**
    * Test the getValues method.
    */
   public function testGetValues() {
-    $booleanHelper = new BooleanHelper([], 'boolean', []);
+    $referenceHelper = new ReferenceHelper([], 'reference', []);
     $this->assertEquals(
-      $booleanHelper->getValues($this->entity, $this->fieldName), [
-        TRUE,
-        TRUE,
-        TRUE,
+      $referenceHelper->getValues($this->entity, $this->fieldName), [
+        $this->refEntity,
+        $this->refEntity,
+        $this->refEntity,
       ]
     );
   }
