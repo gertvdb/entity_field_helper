@@ -5,11 +5,7 @@ namespace Drupal\entity_field_helper\Plugin\EntityFieldHelper;
 use Drupal\entity_field_helper\Plugin\EntityFieldHelperBase;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\link\Plugin\Field\FieldType\LinkItem;
-use Drupal\Core\Url;
 use Drupal\Core\Link;
-use Drupal\Core\TypedData\Plugin\DataType\Uri;
-use Drupal\Core\TypedData\Plugin\DataType\StringData;
-use Drupal\Core\TypedData\Plugin\DataType\Map;
 
 /**
  * Provides a General Entity Field Helper for Link fields.
@@ -32,27 +28,13 @@ final class LinkHelper extends EntityFieldHelperBase {
       return NULL;
     }
 
-    /** @var \Drupal\Core\Field\FieldItemInterface $item */
+    /** @var \Drupal\link\Plugin\Field\FieldType\LinkItem $item */
     $item = $itemList->first();
     if (!$item) {
       return NULL;
     }
 
-    // Look for the value property.
-    try {
-      $uri = $item->get('uri');
-      $title = $item->get('title');
-      $options = $item->get('options');
-
-      if ($uri instanceof Uri && $title instanceof StringData && $options instanceof Map) {
-        return $this->buildLink($uri, $title, $options);
-      }
-    }
-    catch (\Exception $e) {
-      return NULL;
-    }
-
-    return NULL;
+    return $this->buildLink($item);
   }
 
   /**
@@ -68,7 +50,7 @@ final class LinkHelper extends EntityFieldHelperBase {
 
     $values = [];
 
-    /** @var \Drupal\Core\Field\FieldItemInterface $item */
+    /** @var \Drupal\link\Plugin\Field\FieldType\LinkItem $item */
     foreach ($itemList->getIterator() as $item) {
 
       if (!$item) {
@@ -77,13 +59,7 @@ final class LinkHelper extends EntityFieldHelperBase {
 
       // Look for the value property.
       try {
-        $uri = $item->get('uri');
-        $title = $item->get('title');
-        $options = $item->get('options');
-
-        if ($uri instanceof Uri && $title instanceof StringData && $options instanceof Map) {
-          $values[] = $this->buildLink($uri, $title, $options);
-        }
+        $values[] = $this->buildLink($item);
       }
       catch (\Exception $e) {
         continue;
@@ -94,52 +70,28 @@ final class LinkHelper extends EntityFieldHelperBase {
   }
 
   /**
-   * Get the title for the given link.
+   * Build the link object.
    *
-   * @param \Drupal\Core\TypedData\Plugin\DataType\Uri $uri
-   *   An uri.
-   * @param \Drupal\Core\TypedData\Plugin\DataType\StringData $title
-   *   A title.
-   * @param \Drupal\Core\TypedData\Plugin\DataType\Map $options
-   *   An option map.
+   * @param \Drupal\link\Plugin\Field\FieldType\LinkItem $item
+   *   A link item.
    *
    * @return \Drupal\Core\Link|null
    *   A Link Object.
    */
-  private function buildLink(Uri $uri, StringData $title, Map $options) {
+  private function buildLink(LinkItem $item) {
     try {
-      $url = Url::fromUri($uri->getCastedValue(), $options->getValue());
-      return Link::fromTextAndUrl($title->getCastedValue(), $url);
+      $title = $item->get('title')->getValue();
+      $url = $item->getUrl();
+
+      $attributes = $url->getOption('attributes');
+      if (!isset($attributes['target'])) {
+        $attributes['target'] = $item->isExternal() ? '_blank' : '_self';
+      }
+      return Link::fromTextAndUrl($title, $url);
     }
     catch (\Exception $e) {
       return NULL;
     }
-  }
-
-  /**
-   * Get the title for the given link.
-   *
-   * @param \Drupal\link\Plugin\Field\FieldType\LinkItem $link
-   *   A link object.
-   *
-   * @return string|null
-   *   The passed link's title.
-   */
-  public function getTitle(LinkItem $link) {
-    return $link->get('title') ?: NULL;
-  }
-
-  /**
-   * Determine the target for the given link.
-   *
-   * @param \Drupal\link\Plugin\Field\FieldType\LinkItem $link
-   *   A link object.
-   *
-   * @return string
-   *   The target attribute value.
-   */
-  public function getTarget(LinkItem $link) {
-    return $link->isExternal() ? '_blank' : '_self';
   }
 
 }
