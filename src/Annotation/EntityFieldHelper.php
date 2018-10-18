@@ -14,7 +14,6 @@ use Drupal\Component\Annotation\Plugin;
  */
 class EntityFieldHelper extends Plugin {
 
-
   /**
    * The plugin ID.
    *

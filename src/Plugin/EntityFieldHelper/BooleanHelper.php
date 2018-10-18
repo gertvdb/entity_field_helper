@@ -28,8 +28,13 @@ final class BooleanHelper extends EntityFieldHelperBase {
     }
 
     /** @var \Drupal\Core\Field\FieldItemInterface $item */
-    $item = $itemList->first();
-    if (!$item) {
+    try {
+      $item = $itemList->first();
+      if (!$item) {
+        return NULL;
+      }
+    }
+    catch (\Exception $e) {
       return NULL;
     }
 
@@ -51,6 +56,7 @@ final class BooleanHelper extends EntityFieldHelperBase {
    * {@inheritdoc}
    */
   public function getValues(ContentEntityInterface $entity, $field) {
+
     /** @var \Drupal\Core\Field\FieldItemListInterface $itemList */
     $itemList = $this->getFieldItemList($entity, $field);
     if (!$itemList) {

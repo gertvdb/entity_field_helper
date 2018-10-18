@@ -10,6 +10,8 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\datetime\DateTimeComputed;
 use Drupal\Core\TypedData\Plugin\DataType\Timestamp;
+use Drupal\Core\Datetime\Entity\DateFormat;
+use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
  * Provides a Entity Field Helper for DateTime fields.
@@ -29,11 +31,19 @@ class DateTimeHelper extends EntityFieldHelperBase implements ContainerFactoryPl
   protected $dateFormatter;
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $pluginId, $pluginSefinition, DateFormatterInterface $dateFormatter) {
+  public function __construct(array $configuration, $pluginId, $pluginSefinition, DateFormatterInterface $dateFormatter, ConfigFactoryInterface $configFactory) {
     parent::__construct($configuration, $pluginId, $pluginSefinition);
     $this->dateFormatter = $dateFormatter;
+    $this->configFactory = $configFactory;
   }
 
   /**
@@ -44,7 +54,8 @@ class DateTimeHelper extends EntityFieldHelperBase implements ContainerFactoryPl
       $configuration,
       $pluginId,
       $pluginDefinition,
-      $container->get('date.formatter')
+      $container->get('date.formatter'),
+      $container->get('config.factory')
     );
   }
 
@@ -151,6 +162,58 @@ class DateTimeHelper extends EntityFieldHelperBase implements ContainerFactoryPl
       return NULL;
     }
     return $dateTime;
+  }
+
+  /**
+   * Format the specified date.
+   *
+   * @param \Drupal\Core\Datetime\DrupalDateTime $date
+   *   The date to format.
+   * @param string $format
+   *   A valid php date format.
+   * @param string $timezone
+   *   An optional timezone.
+   * @param string|null $langCode
+   *   (optional) Language code to translate to. NULL (default) means to use
+   *   the user interface language for the page.
+   *
+   * @return string|bool
+   *   The formatted date.
+   */
+  public function formatDate(DrupalDateTime $date, $format, $timezone = NULL, $langCode = NULL) {
+
+    $timestamp = $date->getTimestamp();
+
+    $systemDateConfig = $this->configFactory->get('system.date');
+    $timezone = $timezone ?: $systemDateConfig->get('timezone.default');
+
+    return $this->dateFormatter->format($timestamp, 'custom', $format, $timezone, $langCode);
+  }
+
+  /**
+   * Format the specified date.
+   *
+   * @param \Drupal\Core\Datetime\DrupalDateTime $date
+   *   The date to format.
+   * @param \Drupal\Core\Datetime\Entity\DateFormat $format
+   *   A valid php date format.
+   * @param string|null $timezone
+   *   An optional timezone.
+   * @param string|null $langCode
+   *   (optional) Language code to translate to. NULL (default) means to use
+   *   the user interface language for the page.
+   *
+   * @return string|bool
+   *   The formatted date.
+   */
+  public function formatDateFromDateFormat(DrupalDateTime $date, DateFormat $format, $timezone = NULL, $langCode = NULL) {
+
+    $timestamp = $date->getTimestamp();
+
+    $systemDateConfig = $this->configFactory->get('system.date');
+    $timezone = $timezone ?: $systemDateConfig->get('timezone.default');
+
+    return $this->dateFormatter->format($timestamp, $format->id(), '', $timezone, $langCode);
   }
 
 }

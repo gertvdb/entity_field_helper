@@ -71,7 +71,7 @@ final class ImageHelper extends FileHelper implements ContainerFactoryPluginInte
    */
   public function getImageStyleUrl(FileInterface $file, ImageStyleInterface $imageStyle) {
     $absoluteUrl = $this->getAbsoluteImageStyleUrl($file, $imageStyle);
-    return $absoluteUrl ? file_url_transform_relative($absoluteUrl) : NULL;
+    return $absoluteUrl ? $this->fileUrlTransformRelative($absoluteUrl) : NULL;
   }
 
   /**

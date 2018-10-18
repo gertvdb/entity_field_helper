@@ -92,8 +92,13 @@ abstract class EntityFieldHelperBase extends PluginBase implements EntityFieldHe
       return NULL;
     }
 
-    $itemList = $entity->get($field);
-    if ($itemList->isEmpty()) {
+    try {
+      $itemList = $entity->get($field);
+      if ($itemList->isEmpty()) {
+        return NULL;
+      }
+    }
+    catch (\Exception $e) {
       return NULL;
     }
 
