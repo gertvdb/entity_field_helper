@@ -2,7 +2,7 @@
   "name": "gertvdb/entity_field_helper",
   "description": "Helper for getting field values from entities.",
   "type": "drupal-module",
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
   "require-dev": {
     "drupal/coder": "^8.2",
     "drupal/core": "^8.2",
