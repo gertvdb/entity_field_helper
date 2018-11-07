@@ -1,3 +1,7 @@
+# Entity Field Helper
+
+[![Travis](https://img.shields.io/travis/gertvdb/entity_field_helper.svg)](https://travis-ci.org/gertvdb/entity_field_helper) [![Packagist](https://img.shields.io/packagist/v/gertvdb/entity_field_helper.svg)](https://packagist.org/packages/gertvdb/entity_field_helper)
+
 Description
 -----------
 This module provides a helper class for getting values from entities.
