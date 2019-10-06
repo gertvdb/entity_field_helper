@@ -14,11 +14,11 @@ cache:
   directories:
     - ~/.composer
 
-install:
-  - COMPOSER_MEMORY_LIMIT=-1 composer install --prefer-dist
+install: true
 
 before_script:
   - mkdir -p build/logs # Create a folder to store clover files
+  - composer install
 
 script:
   - vendor/bin/parallel-lint --exclude vendor/ -e php,module,inc,install,profile,theme .
@@ -26,6 +26,5 @@ script:
   - vendor/bin/phpcs --ignore=vendor/ --standard=vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml --extensions=php,module,inc,install,profile,theme --report=full --warning-severity=0 .
   - vendor/bin/phpmd --exclude vendor/ --suffixes php,module,inc,install,profile,theme . text phpmd.xml
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+after_script:
   - travis_retry php vendor/bin/php-coveralls -v
