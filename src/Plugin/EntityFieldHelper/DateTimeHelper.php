@@ -83,6 +83,8 @@ class DateTimeHelper extends EntityFieldHelperBase implements ContainerFactoryPl
       }
     }
     catch (\Exception $e) {
+      // This is expected behavior since we want to continue
+      // and try to use the value property.
     }
 
     // When no computed date property is present,
@@ -98,6 +100,7 @@ class DateTimeHelper extends EntityFieldHelperBase implements ContainerFactoryPl
       }
     }
     catch (\Exception $e) {
+      return NULL;
     }
 
     return NULL;

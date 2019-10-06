@@ -41,6 +41,7 @@ final class ProcessedTextHelper extends EntityFieldHelperBase {
       }
     }
     catch (\Exception $e) {
+      return NULL;
     }
 
     return NULL;
@@ -74,6 +75,7 @@ final class ProcessedTextHelper extends EntityFieldHelperBase {
         }
       }
       catch (\Exception $e) {
+        return NULL;
       }
     }
 

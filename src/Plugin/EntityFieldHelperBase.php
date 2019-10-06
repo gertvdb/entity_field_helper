@@ -70,6 +70,7 @@ abstract class EntityFieldHelperBase extends PluginBase implements EntityFieldHe
         }
       }
       catch (\Exception $e) {
+        return NULL;
       }
     }
 
