@@ -1,6 +1,9 @@
 # Entity Field Helper
 
-[![Travis](https://img.shields.io/travis/gertvdb/entity_field_helper.svg)](https://travis-ci.org/gertvdb/entity_field_helper) [![Packagist](https://img.shields.io/packagist/v/gertvdb/entity_field_helper.svg)](https://packagist.org/packages/gertvdb/entity_field_helper)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/gertvdb/entity_field_helper/blob/8.x-1.x/LICENSE.md)
+[![Travis](https://img.shields.io/travis/gertvdb/entity_field_helper.svg)](https://travis-ci.org/gertvdb/entity_field_helper) 
+[![Coverage Status](https://coveralls.io/repos/github/gertvdb/entity_field_helper/badge.svg?branch=8.x-1.x)](https://coveralls.io/github/gertvdb/entity_field_helper?branch=8.x-1.x)
+[![Packagist](https://img.shields.io/packagist/v/gertvdb/entity_field_helper.svg)](https://packagist.org/packages/gertvdb/entity_field_helper)
 
 Description
 -----------
