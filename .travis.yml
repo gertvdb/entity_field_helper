@@ -14,11 +14,11 @@ cache:
   directories:
     - ~/.composer
 
-install: true
+install:
+  - COMPOSER_MEMORY_LIMIT=-1 composer install --prefer-dist
 
 before_script:
   - mkdir -p build/logs # Create a folder to store clover files
-  - composer install
 
 script:
   - vendor/bin/parallel-lint --exclude vendor/ -e php,module,inc,install,profile,theme .
