@@ -1,5 +1,5 @@
 name: Entity Field Helper
 type: module
 description: Helper for getting field values from entities.
-core_version_requirement: ^9.1
+core_version_requirement: ^10
 package: Helpers
