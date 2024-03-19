@@ -62,7 +62,7 @@ class FileHelper extends ReferenceHelper {
    *   then FALSE is returned.
    */
   protected function fileCreateUrl($uri) {
-    return file_create_url($uri);
+    return \Drupal::service('file_url_generator')->generateAbsoluteString($uri);
   }
 
   /**
@@ -77,7 +77,7 @@ class FileHelper extends ReferenceHelper {
    *   Otherwise: the original value of $file_url.
    */
   protected function fileUrlTransformRelative($fileUrl) {
-    return file_url_transform_relative($fileUrl);
+    return \Drupal::service('file_url_generator')->transformRelative($fileUrl);
   }
 
 }
